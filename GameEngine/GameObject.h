@@ -29,6 +29,16 @@ public:
 
 	}
 
+	float Distance(XMFLOAT3 d)
+	{
+
+	}
+
+	void MoveTo(XMFLOAT3 move, XMFLOAT3 speed)
+	{
+
+	}
+
 	void Update()
 	{
 		//AI Movement, physics (velocity/gravity), color changes, etc. could go here.

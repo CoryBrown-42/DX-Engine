@@ -80,9 +80,19 @@ bool ExampleGame::Init()
 	meshMap["TexturedSquare"] = new Mesh<VertexPosNormTexture>();
 	Geometry::CreateTexturedSquare((Mesh<VertexPosNormTexture>*)meshMap["TexturedSquare"], device);
 
+	//table
+
+
 	//Import models
 	meshMap["Kirby"] = new Mesh<VertexPosNormTexture>();
 	ModelImporter::LoadFromFile("../Assets/Models/kirby.obj", (Mesh<VertexPosNormTexture>*)meshMap["Kirby"], device);
+
+
+	meshMap["Table"] = new Mesh<VertexPosNormTexture>();
+	ModelImporter::LoadFromFile("../Assets/Models/table.obj", (Mesh<VertexPosNormTexture>*)meshMap["Table"], device);
+
+
+
 	meshMap["Vase"] = new Mesh<VertexPosColNormal>();
 	ModelImporter::LoadFromFile("../Assets/Models/vase.obj", (Mesh<VertexPosColNormal>*)meshMap["Vase"], device);
 	meshMap["Barrel"] = new Mesh<VertexPosNormTexture>();
@@ -106,6 +116,12 @@ bool ExampleGame::Init()
 	gameObjects.push_back(GameObject());
 	GameObject* g = &gameObjects[gameObjects.size() - 1];
 	g->mesh = meshMap["TexturedSquare"];
+
+	//Table mesh
+	gameObjects.push_back(GameObject());
+	GameObject* table = &gameObjects[gameObjects.size() - 1];
+	table->mesh = meshMap["Table"];
+
 	g->scale = XMFLOAT3(5, 5, 5);
 	g->rotation.y = XMConvertToRadians(90);
 	g->specIntensity = 128;
@@ -189,6 +205,27 @@ void ExampleGame::GetInput(float dt)//dt = deltaTime
 		camera.rotation.z += 5 * dt;
 	if (keyboard->ButtonDown('E'))
 		camera.rotation.z -= 5 * dt;
+
+
+	//Assignment 3 Controls
+	if (keyboard->ButtonDown('P'))
+		gameObjects[0].position.z += 5 * dt;
+	if (keyboard->ButtonDown('O'))
+		gameObjects[0].position.z -= 5 * dt;
+	if (keyboard->ButtonDown('U'))
+		gameObjects[0].position.y += 5 * dt;
+	if (keyboard->ButtonDown('I'))
+		gameObjects[0].position.y -= 5 * dt;
+	if (keyboard->ButtonDown('Y'))
+		gameObjects[0].position.x += 5 * dt;
+	if (keyboard->ButtonDown('T'))
+		gameObjects[0].position.x -= 5 * dt;
+	if (keyboard->ButtonDown('J'))
+		gameObjects[0].rotation.x += 5 * dt;
+	if (keyboard->ButtonDown('K'))
+		gameObjects[0].rotation.x -= 5 * dt;
+	//End of Jank
+
 
 	if (keyboard->ButtonDown(VK_UP))
 		ambient += dt;
@@ -325,6 +362,7 @@ void ExampleGame::Draw()
 		break;
 	}
 	gameObjects[0].Draw();  
+	
 
 	deviceContext->PSSetShaderResources(0, 1, &textureMap["kirbyDiffuse"]);
 	deviceContext->PSSetShaderResources(1, 1, &textureMap["kirbySpec"]);
@@ -332,12 +370,13 @@ void ExampleGame::Draw()
 	kirbies[0].color = Utility::RandomColor();
 	kirbies[0].Draw();
 	
+	
 	//Draw text to the screen
 	spriteBatch->Begin(); 
 	{
 		spriteFont->SetLineSpacing(0);
 		float offset = spriteFont->MeasureString(L"ABC").m128_f32[1];
-		XMFLOAT4 col = Utility::RandomColor();
+		XMFLOAT4 col = XMFLOAT4(1, 1, 1, 1);
 		XMVECTOR textColor = XMLoadFloat4(&col);
 		spriteFont->DrawString(spriteBatch, std::wstring(L"FPS: " + std::to_wstring((int)frameRate)).c_str(), XMFLOAT2(0, 0), textColor);
 		spriteFont->DrawString(spriteBatch, L"Toggle Mouse: Tab", XMFLOAT2(0, offset * 1), textColor);
