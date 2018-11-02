@@ -1,0 +1,177 @@
+Mip-Maps
+Smaller versions of a texture used instead of the full version when we get farther away from a texture
+
+Sampler States
+	Filter Modes - Determine Quality of a texture
+		Point, Bilinear, Trilinear, Anisotropic
+	Address Modes - Determine what happens with UVs that are outside of the 0-1 range
+		Wrap - Tile or Repeat an image
+		Clamp - Restrict value outside of 0-1 to 0-1 (so -5, -67 become 0, 1, 100, 100000 become 1)
+				Uses the last edge pixel forever
+		Border - use a fill color outside of 0-1
+		Mirror - Alternate between flipping the uvs as it goes
+				So 0-1 gives you 0-1, 1-2 gives you 1-0, 2-3 gives you 0-1 again, and so on.
+
+Textures
+All images are textures, but textures don't have to be images
+A texture is just a 2D or 3D array of data
+	Ex. A 2D array of Pixels is an image or picture (raster image)
+	A 2D array of Depth values (depth buffer) is a texture that isn't just an image.
+
+Remember also that for a GPU an array of data is called a Buffer
+	So textures are stored as buffers just like vertex buffers, constant buffers, etc.
+
+An image could be used just as a sprite (just a 2D rectangle)
+Or a texture can be used on a 3D object by wrapping it around the faces of the object
+
+Pixel smallest unit of color 
+In a texture that isn't being used as an image, we call those Texels
+	All pixels are texels, not all texels are pixels
+
+ The purpose of Textures is to get Per-Pixel detail instead of Per-Vertex detail (like we've used so far)
+
+
+	//Big 3 vector functions part 2: Dot product
+	//The Dot Product between 2 vectors returns a scalar (a single value instead of a vector)
+				//Represents the angle between the two vectors
+				//If v and x are parallel, dot(v, x) = 1
+				//If v is opposite of x, dot (v, x) = -1
+				//if v is perpendicular to x, dot(v, x) = 0
+
+	//nDotl lighting (normal dot product light direction)
+	//This value is HOW MUCH LIGHT TO APPLY TO THIS PIXEL
+	//This is only for a DIRECTIONAL Light
+	//Other lights need a few more steps
+	//This is DIFFUSE LIGHTING
+
+ Direct X Math...
+	There are 2 categories of data types for everything we use.
+	For storing data, we use
+		XMFLOAT2 (like a sprite's position in 2D)
+		XMFLOAT3 (a 3D objects position, scale, etc.)
+		XMFLOAT4 (color)
+		XMFLOAT4X4 (Transformation matrix, view matrix (camera))
+
+	BUT for operating on data, we use
+		XMVECTOR - always 4 floats, even if you only use 2 or 3. They are xyzw, or rgba for color.
+		XMMATRIX
+
+	The reason is because XMVECTOR and XMMATRIX are optimized and use a special
+	technology called SIMD, or Single Instruction, Multiple Data.
+	Basically when you add two XMFLOAT4's, it adds the x values together, then the y, and so on.
+	When you add two XMVECTORS, it can do all 4 operations at the same time (like multithreading)!
+
+	So Adding XMVECTORs is 4x faster than adding XMFLOATs***********************************************
+
+	BUT unfortunately, XMVECTOR and XMMATRIX are not as good for plain storage,
+	such as for sitting around in a class member variable.
+	So we always use XMFLOAT... for member variables, and XMVECTOR/MATRIX for doing math.
+	We use XMLoadFloat... and XMStoreFloat to switch between them.
+
+	It's super annoying, I know!
+	This is just the kind of thing Engine and Graphics programmers have to deal with.
+
+Common Graphics Issues (Good Exam Terms):
+	Aliasing - stair-step/jagged effect on edges and especially surfaces that are diagonal on screen
+				caused by the simple fact that pixels are squares and aren't infinitely small
+	Anti-Aliasing - techniques to mitigate Aliasing, usually by blurring the jagged edges in some way
+	Clipping - when geometry intersects
+	z-fighting - when 2+ faces have the same depth value so they 'fight' over which is on top, causing flickering.
+	Overdraw is a problem where we change a pixel more than once per draw() - mostly a big issue in transparency (or if you have no depth buffer)
+
+Backface-Culling
+	Get rid of or Ignore triangles on the INSIDES of models (not the 'back' of the model that you could see by moving to the other side of it)
+	For efficiency, it just ignores half the triangles in a game
+
+Hints for A3
+Distance in 2D
+(1, 4) (a gameobject at (1, 4) relative to (0, 0))
+(2, 7) ((1, 3) relative to the first gameobject)
+
+Any two points can be broken down into a right triangle (even in 3D)
+
+A Vector is NOT the same as a Point in space
+	A vector has a magnitude and direction, relative to an arbirtary in point in space
+gameObject2.position - gameObject1.position = A vector representing the location of gameObject2
+												relative to gameObject1s position
+This vector contains the direction from gameObject1 to gameObject2
+	And its magnitude is the distance between them.
+	So if you move by that vector in 1 frame you will teleport gameObject1 to gameObject2
+	Vectors store direction such as:
+	right = (1, 0, 0) -> has a magnitude of 1
+	up = (0, 1, 0) -> has a magnitude of 1
+	diagonal = (1, 1, 0) -> magnitude of 1.41... 
+	Magnitude = length of the hypenteuse formed by the vector relative to (0, 0, 0)
+
+	To extract direction from a vector we want to get a vector with the same direction but 
+	a magnitude of 1
+
+	To get that we Normalize the vector
+	Normalizing a vector - get the same direction but with a magnitude of 1
+							gives us a vector on a unit sphere
+
+	NormalizedVec = Vec/Magnitude of Vec
+	(1, 1, 0) -> Mag 1.414
+	(1/1.141, 1/1.141, 0/1.414) = (.707, .707, 0)
+
+Pythagorean Theorem
+a^2 + b^2 = c^2
+
+2D distance = sqrt((y2-y1)^2 + (x2-x1)^2)
+
+3D distance = sqrt((z2-z1)^2 + (y2-y1)^2 + (x2-x1)^2)
+
+//A Raster image is one that is a grid of pixels (so most images are Raster images)
+//The rasterizer is part of the rendering pipeline that blends values from each vertex across the pixels they cover
+//Rasterizer States let us change how the rasterizer works, like drawing in wireframe or disabling backface culling
+//Depth buffer compares the depth of pixels to determine which is drawn on top
+
+//FROM GAMEOBJECT.H*************************************************************
+//XMStoreFloat4x4(&gameCBuffer.objectTransform, 
+	//XMMatrixTranspose(XMMatrixTranslation(position.x, position.y, position.z)));
+
+//XMStoreFloat4x4(&gameCBuffer.objectTransform,
+//	XMMatrixTranspose(XMMatrixScaling(scale.x, scale.y, scale.z)));
+
+//Commutative property in math
+//5 + 4 = 4 + 5
+//2 * 3 = 3 * 2
+
+//Matrices are NON-COMMUTATIVE
+//That means
+//A * B != B * A
+
+//XMStoreFloat4x4(&gameCBuffer.objectTransform,
+	//WRONG-//XMMatrixTranspose(XMMatrixTranslation(position.x, position.y, position.z) * XMMatrixScaling(scale.x, scale.y, scale.z)));
+	//XMMatrixTranspose(XMMatrixScaling(scale.x, scale.y, scale.z)* XMMatrixTranslation(position.x, position.y, position.z)));
+
+//XMStoreFloat4x4(&gameCBuffer.objectTransform,
+	//XMMatrixTranspose(XMMatrixRotationRollPitchYaw(rotation.y, rotation.x, rotation.z)));
+
+//namespace Globals
+//{
+//	static ID3D11DeviceContext* deviceContext;
+//	static SimpleConstantBuffer* gameCBuffer;
+//	static ID3D11Buffer* gpuCBuffer;
+//}
+
+//Globals are bad because they can be changed by anything, anywhere
+//Which means it could take hours to debug an issue where one is being changed incorrectly
+
+/*
+Design Patterns - common ways to handle problems in programming
+The Singleton Design Pattern - Just a class that there can only be one instance of ever
+								We can put 'global' variables here and they will still have 
+								the protection of a usual class (having private variables, public
+								functions to change them in a controlled way)
+*/
+
+//FROM CAMERA.H
+//The projection matrix represents how our camera sees the world.
+//In other words, is it a perspective or orthographic (2D) view, 
+//what is its size and view angle, how far away (and close) can it see
+
+//Here we multiply the view and projection matrix and store the result
+//We can do it once per frame here, instead of once per vertex in a vertex shader
+//Notice directx requires that we transpose matrices before using them in shaders, for performance reasons.
+//transposing just means flipping the rows and columns in the matrix.

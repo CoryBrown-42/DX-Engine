@@ -1,0 +1,263 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Games">
+      <UniqueIdentifier>{120d20ee-9cb8-4980-b80d-3cad23970f49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Games\Header">
+      <UniqueIdentifier>{87c711e7-0e0a-4ea5-a3d7-c2f54cfbadba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Games\Source">
+      <UniqueIdentifier>{d788f719-cc4c-461e-a60d-9207e60602a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{1d4514e6-3bd8-41fd-a642-0eff8e8da331}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Shaders">
+      <UniqueIdentifier>{bb77e6e9-eafe-4b32-8f21-fac2e3685915}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Shaders\Vertex">
+      <UniqueIdentifier>{125a14a0-5125-41c1-b0fb-b12e46c62801}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Shaders\Pixel">
+      <UniqueIdentifier>{ad3aff32-c2db-4499-9d85-d0a4417da14d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Header">
+      <UniqueIdentifier>{5bfaa5d6-0de1-4abd-ba50-85c408e62f7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Header\Utility">
+      <UniqueIdentifier>{da251541-c6d7-4e3a-ac83-df001cb806f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Header\Input">
+      <UniqueIdentifier>{b0e9ebdb-5c0d-4f2e-ae7b-df78e22e81c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Header\Core">
+      <UniqueIdentifier>{01e4d67f-29ab-4b1c-8a5f-02d62ce2c85d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Source">
+      <UniqueIdentifier>{f490afb8-c1e9-434c-a7f2-488f3f40baf8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Source\Core">
+      <UniqueIdentifier>{b7c8d97e-903c-481b-a8bd-e0a74b81a73c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Source\Input">
+      <UniqueIdentifier>{020dc7f2-200a-4639-bd72-6b9172dd0fc8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Source\Utility">
+      <UniqueIdentifier>{2ae4962f-22e9-4c6a-a0c0-6c8c836d6c1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Header\DXTK">
+      <UniqueIdentifier>{cf67c917-b4d1-425c-a1df-d13d3d69e809}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Source\DXTK">
+      <UniqueIdentifier>{d0347548-4bd5-45c3-b9ef-1fb6041b5c6b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="precompiledheader.cpp">
+      <Filter>Engine\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="dxerr.cpp">
+      <Filter>Engine\Source\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryReader.cpp">
+      <Filter>Engine\Source\DXTK</Filter>
+    </ClCompile>
+    <ClCompile Include="CommonStates.cpp">
+      <Filter>Engine\Source\DXTK</Filter>
+    </ClCompile>
+    <ClCompile Include="DDSTextureLoader.cpp">
+      <Filter>Engine\Source\DXTK</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Engine\Source\DXTK</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteBatch.cpp">
+      <Filter>Engine\Source\DXTK</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteFont.cpp">
+      <Filter>Engine\Source\DXTK</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexTypes.cpp">
+      <Filter>Engine\Source\DXTK</Filter>
+    </ClCompile>
+    <ClCompile Include="WICTextureLoader.cpp">
+      <Filter>Engine\Source\DXTK</Filter>
+    </ClCompile>
+    <ClCompile Include="XboxDDSTextureLoader.cpp">
+      <Filter>Engine\Source\DXTK</Filter>
+    </ClCompile>
+    <ClCompile Include="ExampleGame.cpp">
+      <Filter>Games\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Games\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexDefinitions.cpp">
+      <Filter>Engine\Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="UsageMonitor.h">
+      <Filter>Engine\Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility.h">
+      <Filter>Engine\Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="AlgorithmTimer.h">
+      <Filter>Engine\Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseGame.h">
+      <Filter>Engine\Header\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="precompiledheader.h">
+      <Filter>Engine\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Keyboard.h">
+      <Filter>Engine\Header\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Mouse.h">
+      <Filter>Engine\Header\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="InputDevice.h">
+      <Filter>Engine\Header\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="dxerr.h">
+      <Filter>Engine\Header\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTimer.h">
+      <Filter>Engine\Header\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="AlignedNew.h">
+      <Filter>Engine\Header\DXTK</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryReader.h">
+      <Filter>Engine\Header\DXTK</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonStates.h">
+      <Filter>Engine\Header\DXTK</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstantBuffer.h">
+      <Filter>Engine\Header\DXTK</Filter>
+    </ClInclude>
+    <ClInclude Include="dds.h">
+      <Filter>Engine\Header\DXTK</Filter>
+    </ClInclude>
+    <ClInclude Include="DDSTextureLoader.h">
+      <Filter>Engine\Header\DXTK</Filter>
+    </ClInclude>
+    <ClInclude Include="DemandCreate.h">
+      <Filter>Engine\Header\DXTK</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Engine\Header\DXTK</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformHelpers.h">
+      <Filter>Engine\Header\DXTK</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedResourcePool.h">
+      <Filter>Engine\Header\DXTK</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteBatch.h">
+      <Filter>Engine\Header\DXTK</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteFont.h">
+      <Filter>Engine\Header\DXTK</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexTypes.h">
+      <Filter>Engine\Header\DXTK</Filter>
+    </ClInclude>
+    <ClInclude Include="WICTextureLoader.h">
+      <Filter>Engine\Header\DXTK</Filter>
+    </ClInclude>
+    <ClInclude Include="XboxDDSTextureLoader.h">
+      <Filter>Engine\Header\DXTK</Filter>
+    </ClInclude>
+    <ClInclude Include="ExampleGame.h">
+      <Filter>Games\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexDefinitions.h">
+      <Filter>Engine\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstantBufferDefinitions.h">
+      <Filter>Engine\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Engine\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelImporter.h">
+      <Filter>Engine\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Engine\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Engine\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderManager.h">
+      <Filter>Engine\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry.h">
+      <Filter>Engine\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Engine\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Globals.h">
+      <Filter>Engine\Header</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="BaseGame.cpp">
+      <Filter>Engine\Source\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTimer.cpp">
+      <Filter>Engine\Source\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Keyboard.cpp">
+      <Filter>Engine\Source\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Mouse.cpp">
+      <Filter>Engine\Source\Input</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Common.hlsli">
+      <Filter>Engine\Shaders</Filter>
+    </None>
+    <None Include="SpriteEffect_SpriteVertexShader.inc">
+      <Filter>Engine\Shaders\Vertex</Filter>
+    </None>
+    <None Include="SpriteEffect_SpritePixelShader.inc">
+      <Filter>Engine\Shaders\Pixel</Filter>
+    </None>
+    <None Include="HLSLIncludeFile.hlsli">
+      <Filter>Engine\Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="VS_color.hlsl">
+      <Filter>Engine\Shaders\Vertex</Filter>
+    </FxCompile>
+    <FxCompile Include="PS_color.hlsl">
+      <Filter>Engine\Shaders\Pixel</Filter>
+    </FxCompile>
+    <FxCompile Include="VS_light.hlsl">
+      <Filter>Engine\Shaders\Vertex</Filter>
+    </FxCompile>
+    <FxCompile Include="PS_light.hlsl">
+      <Filter>Engine\Shaders\Pixel</Filter>
+    </FxCompile>
+    <FxCompile Include="PS_litTextured.hlsl">
+      <Filter>Engine\Shaders\Pixel</Filter>
+    </FxCompile>
+    <FxCompile Include="VS_litTextured.hlsl">
+      <Filter>Engine\Shaders\Vertex</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Notes.txt">
+      <Filter>Games</Filter>
+    </Text>
+  </ItemGroup>
+</Project>
