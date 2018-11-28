@@ -1,4 +1,4 @@
-#include "HLSLIncludeFile.hlsli"
+#include "Common.hlsli"
 
 //Pixel Shader
 //The purpose of a pixel shader is just to determine the final color of any pixel

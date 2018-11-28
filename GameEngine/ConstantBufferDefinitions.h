@@ -1,30 +1,5 @@
 #pragma once
 
-/*
-In Math,
-A single value is called a Scalar,
-A vector is a series of values, usually 3 (XYZ) or 4(RGBA)
-A Matrix is like a Table of values
-
-This is a 4x4 Identity Matrix - equivalent to the number '1' in normal math
-X * 1 = X
-
-Identity Matrix (I) I * A = A
-
-[1 1 5 0]
-[0 1 0 0]
-[0 0 1 0]
-[0 0 0 1]
-
-A
-A'
-[1 0 0 0]
-[1 1 0 0]
-[5 0 1 0]
-[0 0 0 1] 
-
-*/
-
 //Constant Buffers just store and transfer data to the GPU
 //that doesn't go in vertices.
 struct SimpleConstantBuffer
@@ -34,6 +9,7 @@ struct SimpleConstantBuffer
 	
 	//For objects
 	XMFLOAT4X4 objectTransform;//Represents position, rotation, scale of a game object
+	XMFLOAT4X4 inverseTranspose;//The inverse-transpose of the object transform matrix is required for shading objects with non-uniform scaling
 	XMFLOAT4 objectColor;
 
 	//For a directional light
@@ -45,9 +21,16 @@ struct SimpleConstantBuffer
 	XMFLOAT3 cameraPosition;
 	float objectSpecularity;
 
-	float showNormals;
 	float uOffset = 0;
 	float vOffset = 0;
 	float uScale = 1;
 	float vScale = 1;
+
+	XMFLOAT2 screenSize;
+	float gameTime;
+	UINT postEffect;
+
+	XMFLOAT2 spriteTexPos;
+	XMFLOAT2 spriteTexSize;
+	float spriteDepth;
 };

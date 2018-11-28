@@ -1,48 +1,37 @@
-Mip-Maps
-Smaller versions of a texture used instead of the full version when we get farther away from a texture
+Overdraw
+	Is when we color 1 pixel more than once in a frame
+	Waste of time to draw something if its going to get covered up.
 
-Sampler States
-	Filter Modes - Determine Quality of a texture
-		Point, Bilinear, Trilinear, Anisotropic
-	Address Modes - Determine what happens with UVs that are outside of the 0-1 range
-		Wrap - Tile or Repeat an image
-		Clamp - Restrict value outside of 0-1 to 0-1 (so -5, -67 become 0, 1, 100, 100000 become 1)
-				Uses the last edge pixel forever
-		Border - use a fill color outside of 0-1
-		Mirror - Alternate between flipping the uvs as it goes
-				So 0-1 gives you 0-1, 1-2 gives you 1-0, 2-3 gives you 0-1 again, and so on.
+//Light is when photons bounce off of surfaces that absorb certain wavelengths and then hit our eyes.
+//RayTracers are rendering engines that actually mimic photons of light
+//Very expensive - usually used for rendering static images (Pixar films, Maya renders)
 
-Textures
-All images are textures, but textures don't have to be images
-A texture is just a 2D or 3D array of data
-	Ex. A 2D array of Pixels is an image or picture (raster image)
-	A 2D array of Depth values (depth buffer) is a texture that isn't just an image.
+//Lighting in games is FAKE!
 
-Remember also that for a GPU an array of data is called a Buffer
-	So textures are stored as buffers just like vertex buffers, constant buffers, etc.
+/*
+In Math,
+A single value is called a Scalar,
+A vector is a series of values, usually 3 (XYZ) or 4(RGBA)
+A Matrix is like a Table of values
 
-An image could be used just as a sprite (just a 2D rectangle)
-Or a texture can be used on a 3D object by wrapping it around the faces of the object
+This is a 4x4 Identity Matrix - equivalent to the number '1' in normal math
+X * 1 = X
 
-Pixel smallest unit of color 
-In a texture that isn't being used as an image, we call those Texels
-	All pixels are texels, not all texels are pixels
+Identity Matrix (I) I * A = A
 
- The purpose of Textures is to get Per-Pixel detail instead of Per-Vertex detail (like we've used so far)
+[1 1 5 0]
+[0 1 0 0]
+[0 0 1 0]
+[0 0 0 1]
 
+A
+A'
+[1 0 0 0]
+[1 1 0 0]
+[5 0 1 0]
+[0 0 0 1] 
 
-	//Big 3 vector functions part 2: Dot product
-	//The Dot Product between 2 vectors returns a scalar (a single value instead of a vector)
-				//Represents the angle between the two vectors
-				//If v and x are parallel, dot(v, x) = 1
-				//If v is opposite of x, dot (v, x) = -1
-				//if v is perpendicular to x, dot(v, x) = 0
-
-	//nDotl lighting (normal dot product light direction)
-	//This value is HOW MUCH LIGHT TO APPLY TO THIS PIXEL
-	//This is only for a DIRECTIONAL Light
-	//Other lights need a few more steps
-	//This is DIFFUSE LIGHTING
+*/
 
  Direct X Math...
 	There are 2 categories of data types for everything we use.

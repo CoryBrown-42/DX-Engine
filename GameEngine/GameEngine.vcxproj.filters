@@ -96,6 +96,15 @@
     <ClCompile Include="VertexDefinitions.cpp">
       <Filter>Engine\Source</Filter>
     </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Engine\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="PostProcess.cpp">
+      <Filter>Engine\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>Engine\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UsageMonitor.h">
@@ -206,6 +215,15 @@
     <ClInclude Include="Globals.h">
       <Filter>Engine\Header</Filter>
     </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Engine\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="PostProcess.h">
+      <Filter>Engine\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>Engine\Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseGame.cpp">
@@ -222,16 +240,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Common.hlsli">
-      <Filter>Engine\Shaders</Filter>
-    </None>
     <None Include="SpriteEffect_SpriteVertexShader.inc">
       <Filter>Engine\Shaders\Vertex</Filter>
     </None>
     <None Include="SpriteEffect_SpritePixelShader.inc">
       <Filter>Engine\Shaders\Pixel</Filter>
     </None>
-    <None Include="HLSLIncludeFile.hlsli">
+    <None Include="Common.hlsli">
       <Filter>Engine\Shaders</Filter>
     </None>
   </ItemGroup>
@@ -253,6 +268,27 @@
     </FxCompile>
     <FxCompile Include="VS_litTextured.hlsl">
       <Filter>Engine\Shaders\Vertex</Filter>
+    </FxCompile>
+    <FxCompile Include="PS_skybox.hlsl">
+      <Filter>Engine\Shaders\Pixel</Filter>
+    </FxCompile>
+    <FxCompile Include="VS_skybox.hlsl">
+      <Filter>Engine\Shaders\Vertex</Filter>
+    </FxCompile>
+    <FxCompile Include="PS_masked.hlsl">
+      <Filter>Engine\Shaders\Pixel</Filter>
+    </FxCompile>
+    <FxCompile Include="PS_normalmapped.hlsl">
+      <Filter>Engine\Shaders\Pixel</Filter>
+    </FxCompile>
+    <FxCompile Include="VS_normalmapped.hlsl">
+      <Filter>Engine\Shaders\Vertex</Filter>
+    </FxCompile>
+    <FxCompile Include="VS_sprite.hlsl">
+      <Filter>Engine\Shaders\Vertex</Filter>
+    </FxCompile>
+    <FxCompile Include="PS_sprite.hlsl">
+      <Filter>Engine\Shaders\Pixel</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

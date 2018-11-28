@@ -22,7 +22,7 @@ BaseGame::BaseGame(HINSTANCE instance)
 	driverType(D3D_DRIVER_TYPE_HARDWARE),
 	windowWidth(800),
 	windowHeight(450),
-	aliasingEnabled(true),
+	aliasingEnabled(false),//!!!IMPORTANT!!! Post Processing (using render targets) is incompatible with hardware anti-aliasing.
 	gameWindow(0),
 	paused(false),
 	minimized(false),

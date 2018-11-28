@@ -2,11 +2,6 @@
 
 #include "Globals.h"
 
-//Light is when photons bounce off of surfaces that absorb certain wavelengths and then hit our eyes.
-//RayTracers are rendering engines that actually mimic photons of light
-//Very expensive - usually used for rendering static images (Pixar films, Maya renders)
-
-//Lighting in games is FAKE!
 
 //Gives off light in all directions from a point
 struct PointLight//Like a lamp, candle
@@ -29,7 +24,7 @@ struct SpotLight
 struct DirectionalLight//Usually used for the Sun in most games
 {
 	DirectionalLight()
-		: direction(20, 0, 0),
+		: direction(1, 0, 0),
 		color(1, 1, 1),
 		intensity(1)
 	{

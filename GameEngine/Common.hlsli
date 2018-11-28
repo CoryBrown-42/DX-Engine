@@ -1,161 +1,127 @@
-//For global shader variables and commonly used functions
+//HLSL - High Level Shader Language
 
-//Constants.
-#define PT_EMITTER 0
-#define PT_FLARE   1
-static const float3 ambient = float3(.01f, .01f, .01f);  
-
-//Lights
-struct DirectionalLight
+//Constant Buffers store data the GPU needs to draw our effects that isn't stored in a vertex
+//This cbuffer is where constant buffer data gets stored on the GPU
+cbuffer SimpleCBuffer : register(b0)//b0 means buffer 0, and matches the '0' we use when we call deviceContext->VSSetConstantBuffers in ExampleGame::Draw()
 {
-	float3 diffusecolor;
-	float intensity;
-	float3 specularcolor;
-	float pad1;
-	float3 direction;
-	float pad2;
-};
+	//RULES:
+	//1. THE ORDER MUST MATCH HERE AND IN YOUR CONSTANT BUFFER STRUCTS IN ConstantBufferDefinitions.h
+	//2. YOU MUST NEVER REACH A MULTIPLE OF 4 FLOATS IN THE MIDDLE OF AN OBJECT
+		//In other words, float4, float4 is ok, 
+		//float2, float2 is ok, float2, float, float is ok. 
+		//but float3, float3 is NOT OK and should be 'padded' to float3, float, float3 ...
+	//3. For Efficiency, you should have many small cbuffers instead of one big one (we'll do that in class toward the end of the semester)
+		//Each cbuffer should happen at different frequencies, aka. 1 per camera update, 1 per frame, 1 per 'window size change', 1 per object, etc.
+		//That way you don't send EVERYTHING everytime you change 1 object's color/texture/position.
 
-struct PointLight
-{
-	float3 diffusecolor;
-	float intensity;
-	float3 specularcolor;
-	float range;
-	float3 position;
-	float pad1;
-	float3 attenuation;
-	float pad2;
-};
+	float4x4 viewProjection;
 
-struct SpotLight
-{
-	float3 diffusecolor;
-	float intensity;
-	float3 specularcolor;
-	float range;
-	float3 position;
-	float spot;
-	float3 direction;
-	float pad1;
-	float3 attenuation;
-	float pad2;
-};
+	//For objects
+	float4x4 objectTransform;
+	float4x4 objectInverseTranspose;
+	float4 objectColor; 
 
-//Constant Buffers
-cbuffer perMesh : register(b0)
-{
-	matrix mesh_world;
-};
+	//For lights
+	float3 lightDirection;
+	float lightIntensity;
+	float3 lightColor;
+	float ambientLightIntensity;
 
-cbuffer perSprite : register(b1)
-{
-	matrix sprite_world;
-	float2 sprite_texPos;
-	float2 sprite_texSize;
-};
+	float3 cameraPosition;
+	float objectSpecularity;
 
-cbuffer perLight : register(b2)
-{	
-	float3 diffusecolor1;
-	float intensity1;
-	float3 specularcolor1;
-	float padL1;
-	float3 direction1;
-	float padL2;
+	float uOffset;
+	float vOffset;
+	float uScale;
+	float vScale;
+	//could do float2 texOffset, float2 texScale
+	//or float4 texModifier instead
 
-	float3 diffusecolor2;
-	float intensity2;
-	float3 specularcolor2;
-	float padL3;
-	float3 direction2;
-	float padL4;
-};
+	float2 screenSize;
+	float gameTime;
+	uint postEffect;//same byte-size as 1 float; just won't have those dang pesky decimals.
 
-cbuffer perFrame : register(b3)
-{
-	float frame_time;
-	float frame_deltaTime;
-	float2 padF1;
-};
-
-cbuffer perCamera : register(b4)
-{
-	float4x4 camera_view;
-	float4x4 camera_projection;
-	float4x4 camera_viewProjection;
-	float3 camera_position;
-	float padC1;
-	float3 camera_up;
-	float padC2;
-
-	// Frustum!
-	float4 frustum_top;
-	float4 frustum_bot;
-	float4 frustum_left;
-	float4 frustum_right;
-	float4 frustum_near;
-	float4 frustum_far;
-};
-
-cbuffer perTerrain : register(b5)
-{
-	// Block 1
-	float cellSize;
-	float maxHeight;
-	uint  tileFactor;
-    float texelSpacing;
-
-	// Block 2
-	float minSquareDistance;
-	float maxSquareDistance;
-   	float maxTessellation;
-    float minTessellation;
-
-	float3 tOrigin;
-};
-
-cbuffer noise : register(b6)
-{
-	float4 nFBM;
-	float nScale;
-};
-
-cbuffer perResize : register(b7)
-{ 
-	uint screen_width;
-	uint screen_height;
+	//Sprites will reuse objectTransform above as well for position/rotation/scale
+	float2 spriteTexPos;//Where in the texture/sprite sheet to pull from - top left corner
+	float2 spriteTexSize;//width and height of sprite to pull from texture/spritesheet
+	float spriteDepth;
 }
 
-cbuffer perAnimation : register(b8)
+struct VPosColInput//Where vertex data gets stored on the GPU when we call deviceContext->VSSetVertexBuffer in ExampleGame::Draw
 {
-	float4x4 bone_transforms[96];
+	float3 position : POSITION;
+	float4 color	: COLOR;
 };
 
-cbuffer perParticleSystem : register(b9)
+struct VPosColToPixel//What the vertex shader outputs, and the pixel shader will receive
 {
-	float3 particle_emitPos;
-	float3 particle_emitDir;
-} 
-
-//Shader inputs/outputs
-struct VPosColInput
-{
-	float3 position		: POSITION;
-	float4 color		: COLOR;
+	float4 position	: SV_POSITION;//System-Value Position - tells the GPU this is the 2D screen position of the vertex and use it to determine which pixels to process
+	float4 color	: COLOR;
 };
 
-struct VPosColToPixel
+//Surface Normals are vectors that indicate the direction a face is facing
+struct VPosColNormInput
 {
-	float4 position		: SV_POSITION;	// System Value Position - Has specific meaning to the pipeline!
-	float4 color		: COLOR;
+	float3 position : POSITION;
+	float4 color : COLOR;
+	float3 normal : NORMAL;
 };
 
-struct VPosTexInput
+struct VPosColNormToPixel
+{
+	float4 position : SV_POSITION;//position is in screen space based on camera
+	float3 worldPosition : POSITION;//3D world space position (including gameobject's position, rotation, scale)
+	float4 color : COLOR;
+	float3 normal : NORMAL;
+};
+
+//Surface Normals are vectors that indicate the direction a face is facing
+struct VPosNormTextureInput
+{
+	float3 position : POSITION;
+	float3 normal : NORMAL;
+	float2 texCoords : TEXCOORD0;
+};
+
+struct VPosNormTextureToPixel
+{
+	float4 position : SV_POSITION;
+	float3 worldPosition : POSITION;
+	float2 texCoords : TEXCOORD0;
+	float3 normal : NORMAL;
+};
+
+struct VSkyInput
+{
+	float3 position : POSITION;
+};
+
+struct VSkyToPixel
+{
+	float4 position : SV_POSITION;
+	float3 worldPosition : POSITION;
+};
+
+struct VPosTexNormTangentInput
 {
 	float3 position		: POSITION;
 	float2 texCoords    : TEXCOORD0;
+	float3 normal		: NORMAL;
+	float3 tangent		: TANGENT;
+	float3 worldPosition		: POSITION;
 };
+
+struct VPosTexNormTangentToPixel
+{
+	float4 position		: SV_POSITION;
+	float2 texCoords    : TEXCOORD0;
+	float3 normal		: NORMAL;
+	float3 tangent		: TANGENT;
+	float3 worldPosition		: POSITION;
+};
+
+typedef VPosTexNormTangentInput StandardVertInput;
+typedef VPosTexNormTangentToPixel StandardVertToPixel;
 
 struct VSpriteInput
 {
@@ -163,144 +129,8 @@ struct VSpriteInput
 	uint2 index			: INDEX;
 };
 
-struct VSpriteInstanceInput
-{
-	float3 position		: POSITION;
-	uint2 index			: INDEX;
-	float4x4 world		: WORLD;
-	float4 dimensions	: DIMENSIONS;
-	//uint InstanceID		: SV_InstanceID;
-};
-
-struct VPosTexToPixel
+struct VSpriteToPixel
 {
 	float4 position		: SV_POSITION;
-	float2 texCoords	: TEXCOORD0;
-};
-
-struct VCubeToPixel
-{
-	float4 position		: SV_POSITION;
-	float3 worldpos		: POSITION;
-};
-
-struct VPosColNormInput
-{
-	float3 position		: POSITION;
-	float4 color        : COLOR0;
-	float3 normal		: NORMAL;
-};
-
-struct VPosColNormInstanceInput	
-{	
-	float3 position		: POSITION;
-	float4 color		: Color;
-	float3 normal		: NORMAL; 
-	float4x4 world		: WORLD;
-	//uint InstanceID		: SV_InstanceID;
-};
-
-struct VPosColNormToPixel
-{
-	float4 position		: SV_POSITION;
-	float4 color		: COLOR;
-	float3 normal		: NORMAL;
-	float3 worldpos		: POSITION;
-};
-
-struct VPosTexNormInput
-{	
-	float3 position		: POSITION;
-	float2 texCoords    : TEXCOORD0;
-	float3 normal		: NORMAL;
-};
-
-struct VPosTexNormInstanceInput
-{	
-	float3 position		: POSITION;
-	float2 texCoords    : TEXCOORD;
-	float3 normal		: NORMAL; 
-	float4x4 world		: WORLD;
-	uint InstanceID		: SV_InstanceID;
-};
-
-struct VPosTexNormToPixel
-{
-	float4 position		: SV_POSITION;
-	float2 texCoords    : TEXCOORD0;
-	float3 normal		: NORMAL; 
-	float3 worldpos		: POSITION;
-};
-
-struct VAnimationInput
-{
-	float3 position		: POSITION;
-	float2 texCoords	: TEXCOORD;
-	float3 normal		: NORMAL;
-	float4 tangent		: TANGENT;
-	float3 weights		: WEIGHTS;
-	uint4 boneIndices	: BONEINDICES;
-};
-
-struct VAnimatedToPixel
-{
-	float4 position		: SV_POSITION;
-	float2 texCoords    : TEXCOORD0;
-	float3 normal		: NORMAL; 
-	float4 tangent		: TANGENT;
-	float3 worldpos		: POSITION;
-};
-
-//Particle System
-struct VSParticleInput
-{
-    float3 initialPos : POSITION;
-	float3 initialVel : VELOCITY;
-    float2 size       : SIZE; 
-    float  age        : AGE;
-    uint   type       : TYPE;  
-};
-
-struct VSParticleToGeometry
-{
-	float4 color    : COLOR;
-	float3 position : POSITION;
-	float2 size     : SIZE;
-	uint   type     : TYPE;
-};
-
-struct GSParticleToPixel
-{
-	float4 position : SV_POSITION;
-	float4 color    : COLOR;
-	float2 tex      : TEXCOORD;
-};
-
-//Points and Lines
-struct VSPointToGeometry
-{
-	float3 position : POSITION;
-	float  size : SIZE;
-	float4 color : COLOR;
-};
-
-struct GSPointToPixel
-{
-	float4 position : SV_POSITION;
-	float4 color    : COLOR;
-}; 
-
-//Billboards (face camera, have texture, width, height, may or may not rotate on some axis)
-struct VSBillboardToGeometry
-{
-	float3 position		: POSITION;
-	float4 color		: COLOR;
-	float2 dimensions	: DIMENSIONS;
-};
-
-struct GSBillboardToPixel
-{
-	float4 position		: SV_POSITION;
-	float4 color		: COLOR;
 	float2 texCoords	: TEXCOORD0;
 };

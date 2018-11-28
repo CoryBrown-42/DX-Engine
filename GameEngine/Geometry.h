@@ -69,10 +69,10 @@ namespace Geometry
 		//Create our own objects
 		VertexPosNormTexture vertices[]
 		{
-			{ XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, -1), XMFLOAT2(0, 1) },//BL
-			{ XMFLOAT3(0, 1, 0), XMFLOAT3(0, 0, -1), XMFLOAT2(0, 0) },//TL
-			{ XMFLOAT3(1, 0, 0), XMFLOAT3(0, 0, -1), XMFLOAT2(1, 1) },//BR			 
-			{ XMFLOAT3(1, 1, 0), XMFLOAT3(0, 0, -1), XMFLOAT2(1, 0) }//TR
+			{ XMFLOAT3(-.5f,-.5f,0), XMFLOAT3(0, 0, -1), XMFLOAT2(0, 1) },//BL
+			{ XMFLOAT3(-.5f,.5f, 0), XMFLOAT3(0, 0, -1), XMFLOAT2(0, 0) },//TL
+			{ XMFLOAT3(.5f,	-.5f,0), XMFLOAT3(0, 0, -1), XMFLOAT2(1, 1) },//BR			 
+			{ XMFLOAT3(.5f,	.5f, 0), XMFLOAT3(0, 0, -1), XMFLOAT2(1, 0) }//TR
 		};
 
 		UINT indices[]
@@ -87,8 +87,26 @@ namespace Geometry
 	}
 
 	template<class T>
-	static void CreateGrid()//A2 goes here (mostly)
+	static void CreateNormalMappedSquare(Mesh<T> *mesh, ID3D11Device* device)
 	{
-		
+		//Create our own objects
+		vector<VertexPosTexNormTan> vertices
+		{
+			{ XMFLOAT3(-.5f,-.5f,0), XMFLOAT2(0, 1), XMFLOAT3(0, 0, -1)},//BL
+			{ XMFLOAT3(-.5f,.5f, 0), XMFLOAT2(0, 0), XMFLOAT3(0, 0, -1)},//TL
+			{ XMFLOAT3(.5f,	-.5f,0), XMFLOAT2(1, 1), XMFLOAT3(0, 0, -1)},//BR			 
+			{ XMFLOAT3(.5f,	.5f, 0), XMFLOAT2(1, 0), XMFLOAT3(0, 0, -1)}//TR
+		};
+
+		vector<UINT> indices
+		{
+			0, 1, 2, 3, 2, 1
+		}; 
+
+		ModelImporter::CalcTangent(vertices, indices);
+		mesh->numVertices = 4;
+		mesh->numIndices = 6;
+		RenderManager::CreateVertexBuffer(vertices, mesh->vertexBuffer, device);
+		RenderManager::CreateIndexBuffer(indices, mesh->indexBuffer, device);
 	}
 }

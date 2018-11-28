@@ -98,11 +98,11 @@ public:
 
 			//Get triangle edges (positions)
 			XMFLOAT3 e0 = Utility::Subtract(vertices[index2].position, vertices[index1].position);
-			XMFLOAT3 e1 = Utility::Subtract(vertices[index3].position, vertices[index1].position);
+			XMFLOAT3 e1 = Utility::Subtract(vertices[index3].position, vertices[index1].position); 
 
 			//Get UV edges
 			XMFLOAT2 uv0 = Utility::Subtract(vertices[index2].texture, vertices[index1].texture);
-			XMFLOAT2 uv1 = Utility::Subtract(vertices[index3].texture, vertices[index1].texture);
+			XMFLOAT2 uv1 = Utility::Subtract(vertices[index3].texture, vertices[index1].texture); 
 
 			//Determine left or right handedness (r will be positive or negative)
 			float r = 1.0f / (uv0.x * uv1.y - uv1.x * uv0.y);
@@ -120,12 +120,12 @@ public:
 
 			//Add tangents to existing ones for this vertex (we'll average them across the vertex, like we do with normals)
 			tan1[index1] = Utility::Add(tan1[index1], tangent);
-			tan1[index2] = Utility::Add(tan1[index2], tangent);;
-			tan1[index3] = Utility::Add(tan1[index3], tangent);;
+			tan1[index2] = Utility::Add(tan1[index2], tangent);
+			tan1[index3] = Utility::Add(tan1[index3], tangent);
 
-			tan2[index1] = Utility::Add(tan2[index1], tangent2);;
-			tan2[index2] = Utility::Add(tan2[index2], tangent2);;
-			tan2[index3] = Utility::Add(tan2[index3], tangent2);;
+			tan2[index1] = Utility::Add(tan2[index1], tangent2);
+			tan2[index2] = Utility::Add(tan2[index2], tangent2);
+			tan2[index3] = Utility::Add(tan2[index3], tangent2);
 		}
 
 		for (unsigned int i = 0; i < vertices.size(); i++)
@@ -138,7 +138,7 @@ public:
 
 			//calculate handedness (tangent direction)
 			//XMVECTOR::m128_f32[0] gives us the x value in an XMVECTOR
-			float dir = (XMVector3Dot(XMVector3Cross(normal, tempTangent), XMLoadFloat3(&tan2[i])).m128_f32[0] < 0.0f ? -1.0f : 1.0f);
+			float dir = ((XMVector3Dot(XMVector3Cross(normal, tempTangent), XMLoadFloat3(&tan2[i])).m128_f32[0] < 0.0f) ? -1.0f : 1.0f);
 			tangent.m128_f32[3] = dir;
 
 			//Store tangent
@@ -154,7 +154,9 @@ private:
 	//Helper function for reading file
 	static void GetVertIndices(std::string &indexStr, OBJVertIndex &vertIndex, UINT &texIndex)
 	{
+		//indexString is for storing the vertex in a hash table to determine if it can be shared by faces later.
 		vertIndex.indexString = indexStr;
+
 		//indices are in format v/vt/vn in obj files, where v are for vertex indices, vt are texture coordinate indices, and vn are normal indices
 		//we only need the first value in each, but have to take the whole thing as a string using fin, so then we parse out that first value. 
 		int indexOfSlash;
@@ -164,7 +166,7 @@ private:
 		std::string temp = indexStr.substr(0, indexOfSlash);
 		vertIndex.vIndex = (UINT)stoi(temp) - 1;//convert v component of string v/vt/vn to an int, and store it in index
 
-												//Get Texture Index
+		//Get Texture Index
 		indexStr = indexStr.substr(indexOfSlash + 1);
 		indexOfSlash = (UINT)indexStr.find('/');
 		temp = indexStr.substr(0, indexOfSlash);
@@ -180,7 +182,6 @@ private:
 		//Get Normal Index
 		indexStr = indexStr.substr(indexOfSlash + 1);
 		vertIndex.vnIndex = (UINT)stoi(indexStr) - 1;
-
 	}
 
 	template<class T> static void MakeBuffers(std::vector<T> &vertices, std::vector<UINT> &indices, Mesh<T> *mesh, ID3D11Device* device)
@@ -208,16 +209,14 @@ private:
 
 	static void ConvertRightToLeftHanded(vector<XMFLOAT3> &positions, vector<XMFLOAT3> &normals, vector<Triangle> &tris)
 	{
-		//So funny story. All the models in our engine have always been flipped horizontally!
-		//But I never noticed, this year or last, until I made that little ghost with his asymmetric tail.
-		//That's because Most current modeling software use a Right-Handed Coordinate system (-Z is forward)
-		//But DirectX uses a Left-Handed one.
+		//Most current modeling software use a Right-Handed Coordinate system (-Z is forward)
+		//But DirectX uses a Left-Handed one - so models would be flipped horizontally
 		//This function fixes that.
 
 		for (UINT i = 0; i < positions.size(); i++)
 			positions[i].z *= -1;
 
-		for (UINT i = 0; i < normals.size(); i++)//should be same size as positions, but I'm sure Timm will find a model where that isn't the case...
+		for (UINT i = 0; i < normals.size(); i++)
 			normals[i].z *= -1;
 
 		for (UINT i = 0; i < tris.size(); i++)
@@ -229,13 +228,28 @@ public:
 	{
 		std::vector<T> vertices;
 		std::vector<UINT> indices;
-		ReadModelFile(file, vertices, indices);
+		XMVECTOR minPos, maxPos;
+		ReadModelFile(file, vertices, indices, minPos, maxPos);
 
 		MakeBuffers(vertices, indices, mesh, device);
+		mesh->CreateBounds(minPos, maxPos);
+	} 
+
+	template<class T> static void LoadFromFileWithTangents(std::string file, Mesh<T> *mesh, ID3D11Device* device)
+	{
+		std::vector<T> vertices;
+		std::vector<UINT> indices;
+		XMVECTOR minPos, maxPos;
+		ReadModelFile(file, vertices, indices, minPos, maxPos);
+
+		CalcTangent(vertices, indices);
+
+		MakeBuffers(vertices, indices, mesh, device);
+		mesh->CreateBounds(minPos, maxPos);
 	}
 
 private:
-	template<class T> static void ReadModelFile(std::string file, std::vector<T> &vertices, std::vector<UINT> &indices)
+	template<class T> static void ReadModelFile(std::string file, std::vector<T> &vertices, std::vector<UINT> &indices, XMVECTOR &minPos, XMVECTOR &maxPos)
 	{
 		std::fstream fin;
 		fin.open(file, std::ios_base::in);
@@ -251,7 +265,12 @@ private:
 		std::vector<XMFLOAT3> positions, normals;
 		std::vector<XMFLOAT2> texCoords;
 		std::string type = "", indexStr = "";
-		float x, y, z, u, v;
+		float x, y, z, u, v;//Position, UVs
+		float minX, maxX, minY, maxY, minZ, maxZ;//For creating bounding box/sphere for model.
+		x = y = z = u = v = 0;
+		minX = minY = minZ = numeric_limits<float>::infinity();
+		maxX = maxY = maxZ = numeric_limits<float>::lowest();
+
 		UINT texIndex = 1;//If model has no texcoords, this is used instead
 		bool endFace, isMoreThan3Sides, skipGetType = false;
 
@@ -263,6 +282,10 @@ private:
 			if (type == "v")
 			{
 				fin >> x >> y >> z;
+				x < minX ? minX = x : maxX = max(maxX, x);
+				y < minY ? minY = y : maxY = max(maxY, y);
+				z < minZ ? minZ = z : maxZ = max(maxZ, z);
+
 				positions.push_back(XMFLOAT3(x, y, z));
 			}
 			else if (type == "vt")
@@ -370,5 +393,8 @@ private:
 		//Create final vertex array. This converts the OBJ vertices into your custom Vertex (T)
 		for (unsigned int i = 0; i < tempVertices.size(); i++)
 			vertices.push_back(T(tempVertices[i]));
+
+		minPos = XMVectorSet(minX, minY, minZ, 1);
+		maxPos = XMVectorSet(maxX, maxY, maxZ, 1);
 	}
 };

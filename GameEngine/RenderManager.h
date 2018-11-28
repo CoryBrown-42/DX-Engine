@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <set>
 
 #include "VertexDefinitions.h"
 #include "Mesh.h"
@@ -144,7 +145,7 @@ public:
 			psBlob->GetBufferSize(),
 			NULL,
 			&shader));
-
+		
 		return shader;
 	}
 
@@ -157,12 +158,13 @@ public:
 		D3D11_BLEND destAlphaBlend = D3D11_BLEND_ZERO, 
 		D3D11_BLEND_OP blendOP = D3D11_BLEND_OP_ADD)
 	{
+		ZeroMemory(&blendState, sizeof(ID3D11BlendState)); 
+
 		D3D11_BLEND_DESC bsd; 
-		ZeroMemory(&blendState, sizeof(ID3D11BlendState));
 		ZeroMemory(&bsd, sizeof(D3D11_BLEND_DESC));
+
 		bsd.AlphaToCoverageEnable = alphaToCoverage;
 		bsd.IndependentBlendEnable = false;//This is if we have different render targets, we can set alpha settings differently for each. We can't use that for now.
-
 		for (int i = 0; i < 8; ++i)
 		{
 			bsd.RenderTarget[i].BlendEnable = enable;
@@ -268,7 +270,7 @@ public:
 		samplerdesc.AddressU = textureMode;
 		samplerdesc.AddressV = textureMode;
 		samplerdesc.AddressW = textureMode;
-		samplerdesc.MaxAnisotropy = 16;
+		samplerdesc.MaxAnisotropy = filter == D3D11_FILTER_ANISOTROPIC ? 16 : 1;
 		samplerdesc.ComparisonFunc = D3D11_COMPARISON_LESS;
 		samplerdesc.MinLOD = minLOD;
 		samplerdesc.MaxLOD = maxLOD;
@@ -282,7 +284,7 @@ public:
 	//A render target is a TEXTURE we are editing by drawing on it.
 	//A RenderTargetView is like a pointer to that texture.
 	static ID3D11RenderTargetView* CreateRenderTarget(ID3D11Texture2D* texture, ID3D11Device *device)
-	{
+	{ 
 		ID3D11RenderTargetView *renderTarget; 
 		HR(device->CreateRenderTargetView(texture, 0, &renderTarget));
 		return renderTarget;
