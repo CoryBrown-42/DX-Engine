@@ -7,8 +7,39 @@
 struct PointLight//Like a lamp, candle
 {
 	XMFLOAT3 position;
+	float range;
+
 	XMFLOAT3 color;
 	float intensity;
+
+	XMFLOAT3 attenuation;
+	float pad;
+
+	PointLight():
+		position(1, .5f, 3),
+		range(5),
+		color(0.25f, 1, 0.25f),
+		intensity(1.0f),
+		attenuation(1, 1, 1),
+		pad(0)
+	{}
+
+	void Update()
+	{
+	
+		XMStoreFloat3(&position, XMLoadFloat3(&position));
+		Globals::Get().GetGameCBuffer()->lightPos = position;
+		Globals::Get().GetGameCBuffer()->lightRange = range;
+		Globals::Get().GetGameCBuffer()->lightColor = color;
+		Globals::Get().GetGameCBuffer()->lightIntensity = intensity;
+		Globals::Get().GetGameCBuffer()->attenuation = attenuation;
+
+		Globals::Get().GetDeviceContext()->UpdateSubresource(
+			Globals::Get().GetGPUCBuffer(),
+			0, NULL,
+			Globals::Get().GetGameCBuffer(),
+			0, 0);
+	}
 };
 
 //Gives off light in one direction, but also has a point it starts from

@@ -574,6 +574,7 @@ void ExampleGame::Update(float dt)
 	camera.Update();
 	sky.position = camera.position;
 
+	pointLight.Update();
 	for (auto it = opaqueObjects.begin(); it != opaqueObjects.end();)
 	{
 		it->Update(dt);

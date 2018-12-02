@@ -1,5 +1,7 @@
 #pragma once
 
+
+
 //Constant Buffers just store and transfer data to the GPU
 //that doesn't go in vertices.
 struct SimpleConstantBuffer
@@ -17,6 +19,11 @@ struct SimpleConstantBuffer
 	float lightIntensity;
 	XMFLOAT3 lightColor;
 	float ambientLightIntensity;
+
+	//For a point Light
+	XMFLOAT3 lightPos;
+	float lightRange;
+	XMFLOAT3 attenuation;
 
 	XMFLOAT3 cameraPosition;
 	float objectSpecularity;

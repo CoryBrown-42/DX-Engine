@@ -3,3 +3,6 @@ Debug/
 .vs/GameEngine/v15/Browse.VC.db
 .vs/GameEngine/v15/Browse.VC.opendb
 .vs/GameEngine/v15/ipch/7c9063fe365b7a5d.ipch
+.vscode/launch.json
+.vs/GameEngine/v15/ipch/2fc087ed4435fa6b.ipch
+Engine.exe

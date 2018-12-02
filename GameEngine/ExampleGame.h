@@ -31,6 +31,7 @@ public:
 	void Draw() override;
 	void OnResize() override;
 	void OnFocus() override;
+	PointLight pointLight;
 
 private:
 	//Assets
