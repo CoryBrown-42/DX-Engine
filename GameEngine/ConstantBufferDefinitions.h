@@ -6,6 +6,13 @@
 //that doesn't go in vertices.
 struct SimpleConstantBuffer
 {
+
+	//For a point Light
+	XMFLOAT3 lightPos;
+	float lightRange;
+	XMFLOAT3 attenuation;
+	float directionalLight = 0;
+
 	//Camera
 	XMFLOAT4X4 viewProjection;//Represents position, rotation, field of view of our eye (camera) in the virtual world
 	
@@ -20,10 +27,7 @@ struct SimpleConstantBuffer
 	XMFLOAT3 lightColor;
 	float ambientLightIntensity;
 
-	//For a point Light
-	XMFLOAT3 lightPos;
-	float lightRange;
-	XMFLOAT3 attenuation;
+
 
 	XMFLOAT3 cameraPosition;
 	float objectSpecularity;

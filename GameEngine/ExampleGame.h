@@ -31,7 +31,6 @@ public:
 	void Draw() override;
 	void OnResize() override;
 	void OnFocus() override;
-	PointLight pointLight;
 
 private:
 	//Assets
@@ -53,6 +52,9 @@ private:
 	ID3D11Buffer *gpuSimpleCBuffer = nullptr;//constant buffer FOR GPU
 	Camera camera;
 	DirectionalLight sun;
+
+
+	PointLight pointLight;
 
 	//Other Settings
 	float clearcolor[4];

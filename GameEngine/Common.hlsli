@@ -14,6 +14,12 @@ cbuffer SimpleCBuffer : register(b0)//b0 means buffer 0, and matches the '0' we 
 		//Each cbuffer should happen at different frequencies, aka. 1 per camera update, 1 per frame, 1 per 'window size change', 1 per object, etc.
 		//That way you don't send EVERYTHING everytime you change 1 object's color/texture/position.
 
+	float3 lightPos;
+	float lightRange;
+	float3 attenuation;
+	uint DirectionalLight;
+
+
 	float4x4 viewProjection;
 
 	//For objects
@@ -71,6 +77,7 @@ struct VPosColNormToPixel
 {
 	float4 position : SV_POSITION;//position is in screen space based on camera
 	float3 worldPosition : POSITION;//3D world space position (including gameobject's position, rotation, scale)
+	//float3 localPosition : LS_POSITION;
 	float4 color : COLOR;
 	float3 normal : NORMAL;
 };

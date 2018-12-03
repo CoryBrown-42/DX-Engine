@@ -571,10 +571,15 @@ void ExampleGame::Update(float dt)
 	
 	gameSimpleCBuffer.gameTime = timer.TotalGameTime();
 	sun.Update();
+
+	pointLight.Update();
+	pointLight.position = camera.position;
+
+
 	camera.Update();
 	sky.position = camera.position;
 
-	pointLight.Update();
+	
 	for (auto it = opaqueObjects.begin(); it != opaqueObjects.end();)
 	{
 		it->Update(dt);
@@ -601,7 +606,8 @@ void ExampleGame::Update(float dt)
 			it = transparentObjects.erase(it);
 		else
 			++it;
-	}	 
+	}	
+	
 }
 
 //Clear() resets the backbuffer texture so that we are drawing to a blank screen

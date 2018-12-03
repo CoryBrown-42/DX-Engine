@@ -6,20 +6,13 @@
 //Gives off light in all directions from a point
 struct PointLight//Like a lamp, candle
 {
-	XMFLOAT3 position;
-	float range;
 
-	XMFLOAT3 color;
-	float intensity;
-
-	XMFLOAT3 attenuation;
-	float pad;
 
 	PointLight():
-		position(1, .5f, 3),
-		range(5),
-		color(0.25f, 1, 0.25f),
-		intensity(1.0f),
+		position(3, 2, 1),
+		range(10),
+		color(1, 1, 1),
+		intensity(1),
 		attenuation(1, 1, 1),
 		pad(0)
 	{}
@@ -40,6 +33,13 @@ struct PointLight//Like a lamp, candle
 			Globals::Get().GetGameCBuffer(),
 			0, 0);
 	}
+
+	XMFLOAT3 position;
+	float range;
+	XMFLOAT3 color;
+	float intensity;
+	XMFLOAT3 attenuation;
+	float pad;
 };
 
 //Gives off light in one direction, but also has a point it starts from
