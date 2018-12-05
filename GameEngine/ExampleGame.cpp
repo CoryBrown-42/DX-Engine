@@ -79,6 +79,15 @@ bool ExampleGame::Init()
 	textureMap["wellSpec"] = RenderManager::CreateTexture(L"..\\Assets\\Images\\WellSpecMap.jpg", device, deviceContext);
 	textureMap["wellNormal"] = RenderManager::CreateTexture(L"..\\Assets\\Images\\WellNormalMap.jpg", device, deviceContext);
 	textureMap["testNormal"] = RenderManager::CreateTexture(L"..\\Assets\\Images\\testNormalMap.png", device, deviceContext);
+	
+	textureMap["headDiffuse"] = RenderManager::CreateTexture(L"..\\Assets\\Images\\Green.jpg", device, deviceContext);
+	textureMap["headSpec"] = RenderManager::CreateTexture(L"..\\Assets\\Images\\Spec.jpg", device, deviceContext);
+	textureMap["headNormal"] = RenderManager::CreateTexture(L"..\\Assets\\Images\\Normal.jpg", device, deviceContext);
+
+
+	textureMap["waterDiffuse"] = RenderManager::CreateTexture(L"..\\Assets\\Images\\Blue.jpg", device, deviceContext);
+	textureMap["waterSpec"] = RenderManager::CreateTexture(L"..\\Assets\\Images\\Spec-2.jpg", device, deviceContext);
+	textureMap["waterNormal"] = RenderManager::CreateTexture(L"..\\Assets\\Images\\Normal-2.jpg", device, deviceContext);
 
 	//Create Samplers
 	samplerMap["default"] = RenderManager::CreateSamplerState(device);
@@ -212,6 +221,33 @@ bool ExampleGame::Init()
 	materialMap["groundNormalMapped"].textures[3] = textureMap["groundNormal"];
 	materialMap["groundNormalMapped"].textures[4] = textureMap["sky"];
 
+	materialMap["head"] = Material();
+	materialMap["head"].rasterizerState = rasterizerState;
+	materialMap["head"].depthState = standardDepthState;
+	materialMap["head"].blendState = noBlend;
+	materialMap["head"].vShader = vShaderMap["normalmapping"];
+	materialMap["head"].inputLayout = inputLayoutMap["normalmapping"];
+	materialMap["head"].pShader = pShaderMap["normalmapping"];
+	materialMap["head"].samplers.push_back(samplerMap["anisotropic"]);
+	materialMap["head"].textures.push_back(textureMap["headDiffuse"]);
+	materialMap["head"].textures.push_back(textureMap["headSpec"]);
+	materialMap["head"].textures.push_back(textureMap["kirbyMask"]);
+	materialMap["head"].textures.push_back(textureMap["headNormal"]);
+
+
+	materialMap["water"] = Material();
+	materialMap["water"].rasterizerState = rasterizerState;
+	materialMap["water"].depthState = standardDepthState;
+	materialMap["water"].blendState = noBlend;
+	materialMap["water"].vShader = vShaderMap["normalmapping"];
+	materialMap["water"].inputLayout = inputLayoutMap["normalmapping"];
+	materialMap["water"].pShader = pShaderMap["normalmapping"];
+	materialMap["water"].samplers.push_back(samplerMap["anisotropic"]);
+	materialMap["water"].textures.push_back(textureMap["waterDiffuse"]);
+	materialMap["water"].textures.push_back(textureMap["waterSpec"]);
+	materialMap["water"].textures.push_back(textureMap["kirbyMask"]);
+	materialMap["water"].textures.push_back(textureMap["waterNormal"]);
+
 	//Generate models
 	meshMap["Square"] = new Mesh<VertexPositionColor>();
 	Geometry::CreateEfficientSquare((Mesh<VertexPositionColor>*)meshMap["Square"], device);
@@ -239,6 +275,8 @@ bool ExampleGame::Init()
 	ModelImporter::LoadFromFile("../Assets/Models/sword.obj", (Mesh<VertexPosColNormal>*)meshMap["Sword"], device);
 	meshMap["Well"] = new Mesh<VertexPosTexNormTan>();
 	ModelImporter::LoadFromFileWithTangents("../Assets/Models/well.obj", (Mesh<VertexPosTexNormTan>*)meshMap["Well"], device);
+	meshMap["Head"] = new Mesh<VertexPosTexNormTan>();
+	ModelImporter::LoadFromFileWithTangents("../Assets/Models/head.obj", (Mesh<VertexPosTexNormTan>*)meshMap["Head"], device);
 	UINT numModels = 7;
 
 #pragma region New Stuff For After Thanksgiving Break
@@ -331,6 +369,13 @@ bool ExampleGame::Init()
 	well.mesh = meshMap["Well"];
 	well.position.x -= 5;
 	opaqueObjects.emplace_back(well);
+
+	GameObject head2;
+	head2.material = &materialMap["water"];
+	head2.mesh = meshMap["Head"];
+	head2.position.x -= 20;
+	head2.position.y += 10;
+	opaqueObjects.emplace_back(head2);
 
 	GameObject normalMappedSquare;
 	normalMappedSquare.material = &materialMap["testNormalMap"];
@@ -435,6 +480,12 @@ bool ExampleGame::Init()
 		transparentObjects.back()->position.y += maxDist / 2.0f;
 	} 
 		
+	GameObject head;
+	head.material = &materialMap["head"];
+	head.mesh = meshMap["Head"];
+	head.position.x -= 20;
+	head.position.y += 20;
+	opaqueObjects.emplace_back(head);
 	//We must resize once at the beginning of the game to build the initial screen buffers, camera aspect ratio, etc.
 	//After that it only gets called if the game window changes size/maximizes/fullscreens, etc.
 	OnResize(); 
@@ -563,6 +614,26 @@ void ExampleGame::GetInput(float dt)//dt = deltaTime
 //Update is for movement, AI, physics, most gameplay things.
 void ExampleGame::Update(float dt)
 {
+	XMFLOAT4A randomColor4 = XMFLOAT4A(Utility::RandomFloat(),
+		Utility::RandomFloat(),
+		Utility::RandomFloat(),
+		Utility::RandomFloat()
+	);
+	
+	
+	GameObject head = opaqueObjects.back();
+	head.SetColor(Utility::RandomColor());
+
+	opaqueObjects.back().SetColor(Utility::RandomColor());
+	opaqueObjects.back().rotation.y += 1 * dt;
+
+
+	
+
+	sky.rotation.x += .01f * dt;
+	sky.SetColor(Utility::RandomColor());
+		//material->textures[3].
+
 	if (dt > 50)
 		cout << "Framerate: " << 1000.0f/dt << "! If your framerate is this low you are doing something wrong!!!" << endl;
 

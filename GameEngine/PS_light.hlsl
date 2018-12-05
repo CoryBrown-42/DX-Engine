@@ -52,16 +52,8 @@ if (dis > lightRange)
 		float4 finalColor = float4(input.color.xyz * diffuse + specularity + ambientLightIntensity, input.color.a);
 		float4 visualizedNormals = float4(input.normal, 1);
 
-		/*[flatten]
-		if (DirectionalLight == 1)
-		{
-			return float4((input.color.xyz * diffuse) + specularity + ambientLightIntensity, input.color.a);
-		}
-		else
-		{*/
-		//return lerp(finalColor, float4(input.normal, 1), 1);
 		return finalColor;
-		//}
+		
 
 
 	}
