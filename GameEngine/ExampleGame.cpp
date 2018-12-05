@@ -89,6 +89,8 @@ bool ExampleGame::Init()
 	textureMap["waterSpec"] = RenderManager::CreateTexture(L"..\\Assets\\Images\\Spec-2.jpg", device, deviceContext);
 	textureMap["waterNormal"] = RenderManager::CreateTexture(L"..\\Assets\\Images\\Normal-2.jpg", device, deviceContext);
 
+	textureMap["random"] = RenderManager::CreateTexture(L"..\\Assets\\Images\\random_3.jpg", device, deviceContext);
+
 	//Create Samplers
 	samplerMap["default"] = RenderManager::CreateSamplerState(device);
 	samplerMap["point"] = RenderManager::CreateSamplerState(device, D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP);
@@ -245,8 +247,21 @@ bool ExampleGame::Init()
 	materialMap["water"].samplers.push_back(samplerMap["anisotropic"]);
 	materialMap["water"].textures.push_back(textureMap["waterDiffuse"]);
 	materialMap["water"].textures.push_back(textureMap["waterSpec"]);
-	materialMap["water"].textures.push_back(textureMap["kirbyMask"]);
+	materialMap["water"].textures.push_back(textureMap["blank"]);
 	materialMap["water"].textures.push_back(textureMap["waterNormal"]);
+
+	materialMap["meat"] = Material();
+	materialMap["meat"].rasterizerState = rasterizerState;
+	materialMap["meat"].depthState = standardDepthState;
+	materialMap["meat"].blendState = noBlend;
+	materialMap["meat"].vShader = vShaderMap["normalmapping"];
+	materialMap["meat"].inputLayout = inputLayoutMap["normalmapping"];
+	materialMap["meat"].pShader = pShaderMap["normalmapping"];
+	materialMap["meat"].samplers.push_back(samplerMap["anisotropic"]);
+	materialMap["meat"].textures.push_back(textureMap["random"]);
+	materialMap["meat"].textures.push_back(textureMap["blank"]);
+	materialMap["meat"].textures.push_back(textureMap["blank"]);
+	materialMap["meat"].textures.push_back(textureMap["blank"]);
 
 	//Generate models
 	meshMap["Square"] = new Mesh<VertexPositionColor>();
@@ -277,6 +292,19 @@ bool ExampleGame::Init()
 	ModelImporter::LoadFromFileWithTangents("../Assets/Models/well.obj", (Mesh<VertexPosTexNormTan>*)meshMap["Well"], device);
 	meshMap["Head"] = new Mesh<VertexPosTexNormTan>();
 	ModelImporter::LoadFromFileWithTangents("../Assets/Models/head.obj", (Mesh<VertexPosTexNormTan>*)meshMap["Head"], device);
+	
+	meshMap["Cone"] = new Mesh<VertexPosTexNormTan>();
+	ModelImporter::LoadFromFileWithTangents("../Assets/Models/cone.obj", (Mesh<VertexPosTexNormTan>*)meshMap["Cone"], device);
+	meshMap["Ghost"] = new Mesh<VertexPosTexNormTan>();
+	ModelImporter::LoadFromFileWithTangents("../Assets/Models/ghost.obj", (Mesh<VertexPosTexNormTan>*)meshMap["Ghost"], device);
+	meshMap["Monkey"] = new Mesh<VertexPosTexNormTan>();
+	ModelImporter::LoadFromFileWithTangents("../Assets/Models/monkey.obj", (Mesh<VertexPosTexNormTan>*)meshMap["Monkey"], device);
+	meshMap["Meat"] = new Mesh<VertexPosTexNormTan>();
+	ModelImporter::LoadFromFileWithTangents("../Assets/Models/meat.obj", (Mesh<VertexPosTexNormTan>*)meshMap["Meat"], device);
+
+	
+	
+	
 	UINT numModels = 7;
 
 #pragma region New Stuff For After Thanksgiving Break
@@ -371,11 +399,43 @@ bool ExampleGame::Init()
 	opaqueObjects.emplace_back(well);
 
 	GameObject head2;
-	head2.material = &materialMap["water"];
+	head2.material = &materialMap["meat"];
 	head2.mesh = meshMap["Head"];
 	head2.position.x -= 20;
 	head2.position.y += 10;
 	opaqueObjects.emplace_back(head2);
+
+	GameObject meat;
+	meat.material = &materialMap["meat"];
+	meat.mesh = meshMap["Meat"];
+	meat.position.x -= 20;
+	meat.position.y += 10;
+	meat.position.z += 10;
+	opaqueObjects.emplace_back(meat);
+
+	GameObject monk;
+	monk.material = &materialMap["meat"];
+	monk.mesh = meshMap["Monkey"];
+	monk.position.x -= 20;
+	monk.position.y += 10;
+	monk.position.z += 20;
+	opaqueObjects.emplace_back(monk);
+
+	GameObject cone;
+	cone.material = &materialMap["meat"];
+	cone.mesh = meshMap["Cone"];
+	cone.position.x -= 20;
+	cone.position.y += 10;
+	cone.position.z += 30;
+	opaqueObjects.emplace_back(cone);
+
+	GameObject ghost;
+	ghost.material = &materialMap["meat"];
+	ghost.mesh = meshMap["Ghost"];
+	ghost.position.x -= 20;
+	ghost.position.y += 10;
+	ghost.position.z += 40;
+	opaqueObjects.emplace_back(ghost);
 
 	GameObject normalMappedSquare;
 	normalMappedSquare.material = &materialMap["testNormalMap"];
