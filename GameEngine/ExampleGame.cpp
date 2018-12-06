@@ -66,6 +66,7 @@ bool ExampleGame::Init()
 	textureMap["testImage"] = RenderManager::CreateTexture(L"..\\Assets\\Images\\wood2.jpg", device, deviceContext);
 	textureMap["sky"] = RenderManager::CreateTexture(L"..\\Assets\\Images\\skybox.dds", device, deviceContext);
 	textureMap["leaves"] = RenderManager::CreateTexture(L"..\\Assets\\Images\\Leaves.png", device, deviceContext);
+	textureMap["grass"] = RenderManager::CreateTexture(L"..\\Assets\\Images\\grass.png", device, deviceContext);
 	textureMap["groundDiffuse"] = RenderManager::CreateTexture(L"..\\Assets\\Images\\GroundTex.jpg", device, deviceContext);
 	textureMap["groundSpec"] = RenderManager::CreateTexture(L"..\\Assets\\Images\\GroundSpecMap.jpg", device, deviceContext);
 	textureMap["groundNormal"] = RenderManager::CreateTexture(L"..\\Assets\\Images\\GroundNormalMap.jpg", device, deviceContext);
@@ -179,6 +180,14 @@ bool ExampleGame::Init()
 	materialMap["leaves"].textures.push_back(textureMap["blank"]);
 	materialMap["leaves"].textures.push_back(textureMap["blank"]);
 
+	materialMap["grass"] = materialMap["textured"];
+	materialMap["grass"].pShader = pShaderMap["masked"];
+	materialMap["grass"].rasterizerState = twoSidedRS;
+	materialMap["grass"].textures.push_back(textureMap["grass"]);
+	materialMap["grass"].textures.push_back(textureMap["blank"]);
+	materialMap["grass"].textures.push_back(textureMap["blank"]);
+	materialMap["grass"].textures.push_back(textureMap["blank"]);
+
 	materialMap["kirby"] = materialMap["textured"];
 	materialMap["kirby"].textures.push_back(textureMap["kirbyDiffuse"]);
 	materialMap["kirby"].textures.push_back(textureMap["kirbySpec"]);
@@ -258,7 +267,7 @@ bool ExampleGame::Init()
 	materialMap["meat"].inputLayout = inputLayoutMap["normalmapping"];
 	materialMap["meat"].pShader = pShaderMap["normalmapping"];
 	materialMap["meat"].samplers.push_back(samplerMap["anisotropic"]);
-	materialMap["meat"].textures.push_back(textureMap["random"]);
+	materialMap["meat"].textures.push_back(textureMap["blank"]);
 	materialMap["meat"].textures.push_back(textureMap["blank"]);
 	materialMap["meat"].textures.push_back(textureMap["blank"]);
 	materialMap["meat"].textures.push_back(textureMap["blank"]);
@@ -390,7 +399,13 @@ bool ExampleGame::Init()
 	leaves.material = &materialMap["leaves"];
 	leaves.mesh = meshMap["TexturedSquare"]; 
 	leaves.position.y += .5f; 
-	opaqueObjects.emplace_back(leaves); 
+	opaqueObjects.emplace_back(leaves);
+
+	GameObject grass;
+	grass.material = &materialMap["grass"];
+	grass.mesh = meshMap["TexturedSquare"];
+	grass.position.y += .5f;
+	opaqueObjects.emplace_back(grass);
 
 	GameObject well;
 	well.material = &materialMap["well"];
@@ -506,6 +521,32 @@ bool ExampleGame::Init()
 		transparentObjects.back()->position.x += 10;
 		transparentObjects.back()->position.y += maxDist / 2.0f;
 	}
+	for (int i = 0; i < 100; ++i) 
+	{
+
+		transparentObjects.emplace_back(new GameObject());
+		transparentObjects.back()->SetColor(Utility::RandomColor(true));
+		transparentObjects.back()->scale = XMFLOAT3(1, 1, 1);
+		transparentObjects.back()->mesh = meshMap["TexturedSquare"];
+		transparentObjects.back()->material = &materialMap["grass"];
+		transparentObjects.back()->position.x += maxDist / Utility::RandomFloat() + 1;
+		transparentObjects.back()->position.z += maxDist / Utility::RandomFloat() + 1;
+		transparentObjects.back()->position.y += .5f;
+
+	}
+	for (int i = 0; i < 5; ++i)
+	{
+
+		transparentObjects.emplace_back(new GameObject());
+		transparentObjects.back()->SetColor(Utility::RandomColor(true));
+		transparentObjects.back()->scale = XMFLOAT3(5, 5, 5);
+		transparentObjects.back()->mesh = meshMap["TexturedSquare"];
+		transparentObjects.back()->material = &materialMap["leaves"];
+		transparentObjects.back()->position.x += maxDist / Utility::RandomFloat() + 1;
+		transparentObjects.back()->position.z += maxDist / Utility::RandomFloat() + 1;
+		transparentObjects.back()->position.y += 2;
+
+	}
 	for (int i = 0; i < 25; ++i)
 	{
 		transparentObjects.emplace_back(new GameObject());
@@ -617,15 +658,35 @@ void ExampleGame::GetInput(float dt)//dt = deltaTime
 			g.acceleration.y = -1;
 		}
 
+		float time = 0.0f;
+		time += .5f * dt;
+	//float time = 0.0f;
 	if (keyboard->ButtonDown('G'))
 	{
+		
 		opaqueObjects.emplace_back(GameObject());
-		opaqueObjects.back().mesh = meshMap["Kirby"];
-		opaqueObjects.back().material = &materialMap["kirby"];
-		opaqueObjects.back().position = Utility::RandomPosition(5);
-		opaqueObjects.back().position.y += 5;
+		opaqueObjects.back().mesh = meshMap["Ghost"];
+		opaqueObjects.back().material = &materialMap["additiveBlending"];
+		opaqueObjects.back().SetColor({ 1.0f, 1.0f, 1.0f, 0.0f });
+		opaqueObjects.back().position.y = -5;
+		opaqueObjects.back().position.x = Utility::RandomFloat();
+		opaqueObjects.back().position.z = Utility::RandomFloat();
+		opaqueObjects.back().position.y += 2;
 		opaqueObjects.back().velocity = Utility::RandomPosition(5);//Just random XYZ between -5 and 5
+
+		for (int i = 0; i < sizeof(opaqueObjects) - 1; ++i)
+		{
+			time = 0;
+			if (time > 5)
+				opaqueObjects.back().SetColor({ 1.0f, 1.0f, 1.0f, 0.5f });
+			else
+				opaqueObjects.back().SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+		}
+		//TODO: Hey
+		//they are starting off transparent but still have the additive
+
 	}
+
 	if (keyboard->ButtonDown('H'))
 	{
 		transparentObjects.emplace_back(new GameObject());
@@ -715,7 +776,7 @@ void ExampleGame::Update(float dt)
 	{
 		it->Update(dt);
 		
-		if (XMVector3LengthEst(XMLoadFloat3(&it->position)).m128_f32[0] > 50)//If object is more than 50 units from (0,0,0)
+		if (XMVector3LengthEst(XMLoadFloat3(&it->position)).m128_f32[0] > 100)//If object is more than 50 units from (0,0,0)
 			it = opaqueObjects.erase(it);//moves it to the next object after the erased one.
 		else
 			++it;//If we didn't have this in 'else' you'd skip any element immediately following a deleted one.
@@ -733,7 +794,7 @@ void ExampleGame::Update(float dt)
 		if (camera.bounds.Intersects((*it)->GetBoundingSphere()))
 			cout << "Camera colliding with object. dt: " << dt << "\n";
 
-		if (XMVector3LengthEst(XMLoadFloat3(&(*it)->position)).m128_f32[0] > 50)//If object is more than 50 units from (0,0,0)
+		if (XMVector3LengthEst(XMLoadFloat3(&(*it)->position)).m128_f32[0] > 200)//If object is more than 50 units from (0,0,0)
 			it = transparentObjects.erase(it);
 		else
 			++it;
