@@ -49,6 +49,12 @@ public:
 			color.z *= color.w;
 		}
 	}
+	XMFLOAT4 GetColor()
+	{
+		
+		return color;
+
+	}
 
 	void Update(float dt)
 	{

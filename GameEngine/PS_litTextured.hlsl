@@ -17,7 +17,7 @@ float4 main(VPosNormTextureToPixel input) : SV_TARGET //System Value Target - te
 	float4 skyColor = skyboxTexture.Sample(standardSampler, reflect(-eyeDir, input.normal));
 	//return skyColor;//Perfect Chrome
 
-	float4 color = diffuseTexture.Sample(standardSampler, input.texCoords);
+    float4 color = diffuseTexture.Sample(standardSampler, input.texCoords + float2(.5f, gameTime));
 	float4 maskColor = maskTexture.Sample(standardSampler, input.texCoords);
 	float3 diffuse = 0;
 	float3 specularity = 0;
@@ -34,9 +34,13 @@ float4 main(VPosNormTextureToPixel input) : SV_TARGET //System Value Target - te
 		specularity *= specTextureValue;
 		diffuse += nDotL * lightColor * lightIntensity;
 	}
-	
+	//float uOffset = 1;
 	float4 diffuseColor = lerp(color, objectColor, maskColor.r);//r channel is where to use randomized object color instead of texture color
 	
+	
+    //float uOffset = 1.0f * gameTime;
+
+
 	//Should just be in a different set of shaders that include the sky, but I wanted to save class-time not making a separate one.
 	[flatten]
 	if (skyColor.a > 0.0f)

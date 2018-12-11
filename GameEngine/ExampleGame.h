@@ -64,6 +64,7 @@ private:
 	GameObject sky;
 	vector<GameObject> opaqueObjects;
 	vector<GameObject*> transparentObjects;//Significantly more efficient to sort pointers than objects (much less copying)
+	vector<GameObject> Ghosties;
 	vector<Sprite> sprites;
 
 	//Post Processing

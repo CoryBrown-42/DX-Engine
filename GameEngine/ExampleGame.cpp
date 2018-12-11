@@ -88,7 +88,7 @@ bool ExampleGame::Init()
 
 	textureMap["waterDiffuse"] = RenderManager::CreateTexture(L"..\\Assets\\Images\\Blue.jpg", device, deviceContext);
 	textureMap["waterSpec"] = RenderManager::CreateTexture(L"..\\Assets\\Images\\Spec-2.jpg", device, deviceContext);
-	textureMap["waterNormal"] = RenderManager::CreateTexture(L"..\\Assets\\Images\\Normal-2.jpg", device, deviceContext);
+	textureMap["waterNormal"] = RenderManager::CreateTexture(L"..\\Assets\\Images\\Normal.jpg", device, deviceContext);
 
 	textureMap["random"] = RenderManager::CreateTexture(L"..\\Assets\\Images\\random_3.jpg", device, deviceContext);
 
@@ -242,7 +242,7 @@ bool ExampleGame::Init()
 	materialMap["head"].samplers.push_back(samplerMap["anisotropic"]);
 	materialMap["head"].textures.push_back(textureMap["headDiffuse"]);
 	materialMap["head"].textures.push_back(textureMap["headSpec"]);
-	materialMap["head"].textures.push_back(textureMap["kirbyMask"]);
+	materialMap["head"].textures.push_back(textureMap["blank"]);
 	materialMap["head"].textures.push_back(textureMap["headNormal"]);
 
 
@@ -414,10 +414,11 @@ bool ExampleGame::Init()
 	opaqueObjects.emplace_back(well);
 
 	GameObject head2;
-	head2.material = &materialMap["meat"];
+	head2.material = &materialMap["water"];
 	head2.mesh = meshMap["Head"];
 	head2.position.x -= 20;
 	head2.position.y += 10;
+	
 	opaqueObjects.emplace_back(head2);
 
 	GameObject meat;
@@ -429,7 +430,7 @@ bool ExampleGame::Init()
 	opaqueObjects.emplace_back(meat);
 
 	GameObject monk;
-	monk.material = &materialMap["meat"];
+	monk.material = &materialMap["water"];
 	monk.mesh = meshMap["Monkey"];
 	monk.position.x -= 20;
 	monk.position.y += 10;
@@ -437,7 +438,7 @@ bool ExampleGame::Init()
 	opaqueObjects.emplace_back(monk);
 
 	GameObject cone;
-	cone.material = &materialMap["meat"];
+	cone.material = &materialMap["water"];
 	cone.mesh = meshMap["Cone"];
 	cone.position.x -= 20;
 	cone.position.y += 10;
@@ -658,32 +659,47 @@ void ExampleGame::GetInput(float dt)//dt = deltaTime
 			g.acceleration.y = -1;
 		}
 
-		float time = 0.0f;
-		time += .5f * dt;
-	//float time = 0.0f;
+
+
+	
 	if (keyboard->ButtonDown('G'))
 	{
 		
-		opaqueObjects.emplace_back(GameObject());
-		opaqueObjects.back().mesh = meshMap["Ghost"];
-		opaqueObjects.back().material = &materialMap["additiveBlending"];
-		opaqueObjects.back().SetColor({ 1.0f, 1.0f, 1.0f, 0.0f });
-		opaqueObjects.back().position.y = -5;
-		opaqueObjects.back().position.x = Utility::RandomFloat();
-		opaqueObjects.back().position.z = Utility::RandomFloat();
-		opaqueObjects.back().position.y += 2;
-		opaqueObjects.back().velocity = Utility::RandomPosition(5);//Just random XYZ between -5 and 5
+		Ghosties.emplace_back(GameObject());
+		Ghosties.back().mesh = meshMap["Ghost"];
+		Ghosties.back().material = &materialMap["additiveBlending"];
+		Ghosties.back().SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+		Ghosties.back().position.y = -5;
+		Ghosties.back().position.x = Utility::RandomFloat();
+		Ghosties.back().position.z = Utility::RandomFloat();
+		Ghosties.back().position.y += 2;
+		Ghosties.back().velocity = Utility::RandomPosition(5);//Just random XYZ between -5 and 5
 
-		for (int i = 0; i < sizeof(opaqueObjects) - 1; ++i)
+
+		//XMFLOAT4(1, 1, 1, 1);
+		XMFLOAT4 color = Ghosties.back().GetColor();
+		for (int i = 0; i < sizeof(Ghosties) - 1; ++i)
 		{
-			time = 0;
-			if (time > 5)
-				opaqueObjects.back().SetColor({ 1.0f, 1.0f, 1.0f, 0.5f });
-			else
-				opaqueObjects.back().SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+			//Ghosties.back().SetColor(XMFLOAT4(color - XMFLOAT4(0, 0, 0, 0.1f)));
 		}
-		//TODO: Hey
-		//they are starting off transparent but still have the additive
+
+
+		/*
+		Assignment 6:
+
+			Create a new vector for the objects
+			Create a new function that GetColor
+				for each object in that new array
+					gradually use GetColor and turn down it's Alpha. 
+		
+		*/
+
+		/*
+		Assignment 5:
+			Set texture to animate by offseting it's UV
+
+
+		*/
 
 	}
 
@@ -742,8 +758,8 @@ void ExampleGame::Update(float dt)
 	);
 	
 	
-	GameObject head = opaqueObjects.back();
-	head.SetColor(Utility::RandomColor());
+	GameObject head2 = opaqueObjects.back();
+	
 
 	opaqueObjects.back().SetColor(Utility::RandomColor());
 	opaqueObjects.back().rotation.y += 1 * dt;
@@ -753,6 +769,9 @@ void ExampleGame::Update(float dt)
 
 	sky.rotation.x += .01f * dt;
 	sky.SetColor(Utility::RandomColor());
+	
+	
+
 		//material->textures[3].
 
 	if (dt > 50)
@@ -832,6 +851,7 @@ void ExampleGame::Draw()
 
 	//Then draw background/skybox
 	sky.Draw();
+
 		
 	//Then draw transparent objects last in back-to-front order. 
 	camera.DepthSort(transparentObjects);
